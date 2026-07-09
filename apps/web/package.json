@@ -55,7 +55,7 @@
     "prettier": "3.8.4",
     "tailwindcss": "^4.1.13",
     "tailwindcss-animate": "^1.0.7",
-    "typescript": "~6.0.0",
+    "typescript": "~7.0.2",
     "vite": "^8.0.16",
     "vite-plugin-vue-devtools": "^8.1.2",
     "vitest": "^4.1.9",
