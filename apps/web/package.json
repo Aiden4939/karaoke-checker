@@ -51,7 +51,7 @@
     "jsdom": "^29.1.1",
     "msw": "^2.11.2",
     "npm-run-all2": "^9.0.2",
-    "oxlint": "~1.69.0",
+    "oxlint": "~1.73.0",
     "prettier": "3.8.4",
     "tailwindcss": "^4.1.13",
     "tailwindcss-animate": "^1.0.7",
