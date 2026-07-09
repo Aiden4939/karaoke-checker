@@ -29,7 +29,7 @@ RUN pnpm --filter @app/contracts build \
   && pnpm --filter @app/api build \
   && pnpm --filter @app/web build
 
-FROM nginx:1.28-alpine AS runner
+FROM nginx:1.31-alpine AS runner
 
 COPY apps/web/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/apps/web/dist /usr/share/nginx/html
