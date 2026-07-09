@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:24.18.0-alpine AS builder
+FROM node:26.5.0-alpine AS builder
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ COPY apps/api/src apps/api/src/
 RUN pnpm --filter @app/contracts build \
   && pnpm --filter @app/api build
 
-FROM node:24.18.0-alpine AS runner
+FROM node:26.5.0-alpine AS runner
 
 WORKDIR /app
 
