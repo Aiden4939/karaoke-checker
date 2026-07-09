@@ -1,0 +1,13 @@
+---
+description: Hono API backend conventions
+globs: apps/api/**/*.ts
+alwaysApply: false
+---
+
+# Backend
+
+- Validate input with Zod schemas from `@app/contracts`.
+- Keep route handlers small.
+- Return structured success and error envelopes.
+- Use `app.request()` in tests instead of opening a real port.
+- Do not expose stack traces in production responses.

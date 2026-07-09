@@ -1,0 +1,13 @@
+---
+description: Testing expectations
+globs: **/*.{spec,test}.{ts,tsx}
+alwaysApply: false
+---
+
+# Testing
+
+- Add or update tests with behavior changes.
+- Prefer failing tests that reproduce bugs before fixing them.
+- Do not skip tests to make CI pass.
+- Use MSW for frontend API mocking and Hono `app.request()` for backend tests.
+- Run `pnpm verify` or `pnpm verify:full` as appropriate.

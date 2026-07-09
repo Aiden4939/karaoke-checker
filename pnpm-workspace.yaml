@@ -1,0 +1,11 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+  - 'tests/*'
+
+minimumReleaseAge: 0
+
+allowBuilds:
+  esbuild: true
+  msw: true
+  vue-demi: true

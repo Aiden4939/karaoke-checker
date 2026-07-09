@@ -1,0 +1,12 @@
+---
+description: Shared API contract rules
+globs: packages/contracts/**/*.ts
+alwaysApply: false
+---
+
+# API Contract
+
+- Contracts are the source of truth for request and response shapes.
+- Update schemas before changing API handlers or client helpers.
+- Keep error codes and field names stable unless the task requires a breaking change.
+- Add tests when changing validation behavior.

@@ -1,0 +1,54 @@
+name: Feature request
+description: Propose a new product feature
+title: 'feat: '
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: What problem are users facing?
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should the feature achieve?
+    validations:
+      required: true
+  - type: textarea
+    id: mvp
+    attributes:
+      label: MVP scope
+      description: What must be included in the first version?
+    validations:
+      required: true
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of scope
+      description: What should not be included in this change?
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: How will we verify the feature is done?
+    validations:
+      required: true
+  - type: textarea
+    id: ui_impact
+    attributes:
+      label: UI impact
+  - type: textarea
+    id: api_impact
+    attributes:
+      label: API impact
+  - type: textarea
+    id: data_impact
+    attributes:
+      label: Data impact
+  - type: textarea
+    id: tests
+    attributes:
+      label: Test requirements

@@ -1,0 +1,8 @@
+{
+  "initialized": false,
+  "templateName": "inwanding-fullstack-template",
+  "displayName": "Inwanding Fullstack",
+  "description": "AI-agent-friendly separated frontend and backend project template",
+  "webPort": 5173,
+  "apiPort": 3000
+}

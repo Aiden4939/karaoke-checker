@@ -1,0 +1,54 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignoreExportsUsedInFile": true,
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/init-project.mjs"],
+      "project": ["scripts/**/*.{mjs,js}"]
+    },
+    "apps/web": {
+      "entry": ["src/main.ts", "vite.config.ts", "vitest.config.ts", "src/test/setup.ts"],
+      "project": ["src/**/*.{ts,vue}"]
+    },
+    "apps/api": {
+      "entry": ["src/server.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "packages/contracts": {
+      "entry": ["src/index.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "packages/api-client": {
+      "entry": ["src/index.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "tests/e2e": {
+      "entry": ["playwright.config.ts", "tests/**/*.spec.ts"],
+      "project": ["**/*.{ts,tsx}"]
+    }
+  },
+  "ignore": [
+    "**/*.d.ts",
+    "**/dist/**",
+    "apps/web/src/components/ui/dialog/**",
+    "apps/web/src/components/ui/input/**"
+  ],
+  "ignoreDependencies": [
+    "tailwindcss-animate",
+    "jiti",
+    "tailwindcss",
+    "@axe-core/playwright",
+    "@vitest/coverage-v8"
+  ],
+  "ignoreIssues": {
+    "apps/api/src/env.ts": ["exports"],
+    "apps/api/src/middleware/request-id.ts": ["exports"],
+    "apps/web/src/lib/api/index.ts": ["exports"],
+    "apps/web/src/mocks/handlers.ts": ["exports"],
+    "apps/web/src/schemas/health.ts": ["exports", "types"],
+    "apps/web/src/components/ui/dialog/index.ts": ["exports"],
+    "apps/web/src/components/ui/input/index.ts": ["exports"],
+    "apps/web/src/components/ui/input/Input.vue": ["exports"],
+    "packages/api-client/src/client.ts": ["exports"]
+  }
+}

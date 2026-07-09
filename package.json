@@ -1,0 +1,36 @@
+{
+  "name": "inwanding-fullstack-template",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": "24.18.0"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c blue,green \"pnpm --filter @app/api dev\" \"pnpm --filter @app/web dev\"",
+    "dev:api": "pnpm --filter @app/api dev",
+    "dev:web": "pnpm --filter @app/web dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm --filter @app/web lint",
+    "lint:fix": "pnpm --filter @app/web lint:fix",
+    "format": "prettier --write \"**/*.{js,mjs,cjs,ts,json,md,yml,yaml,vue,css}\"",
+    "format:check": "prettier --check \"**/*.{js,mjs,cjs,ts,json,md,yml,yaml,vue,css}\"",
+    "typecheck": "pnpm --filter @app/contracts build && pnpm --filter @app/api build && pnpm --filter @app/web type-check && pnpm --filter @app/contracts exec tsc --noEmit && pnpm --filter @app/api-client exec tsc --noEmit",
+    "test:unit": "pnpm --filter @app/web --filter @app/api --filter @app/contracts --filter @app/api-client test",
+    "test:init": "node --test scripts/**/*.test.mjs",
+    "test": "pnpm test:unit && pnpm test:init",
+    "test:coverage": "pnpm --filter @app/web --filter @app/api --filter @app/contracts --filter @app/api-client test:coverage",
+    "test:e2e": "pnpm --filter @app/e2e test",
+    "knip": "knip",
+    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "verify:full": "pnpm verify && pnpm knip && pnpm test:e2e",
+    "init:project": "node scripts/init-project.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.55.0",
+    "concurrently": "^9.2.1",
+    "knip": "^5.64.0",
+    "prettier": "3.8.4"
+  }
+}

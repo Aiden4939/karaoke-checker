@@ -1,0 +1,14 @@
+---
+description: Core architecture boundaries for the fullstack template
+alwaysApply: true
+---
+
+# Architecture
+
+- Web and API are separate deployable apps in one monorepo.
+- UI calls backend only through `@app/api-client`.
+- Shared schemas and types live in `@app/contracts`.
+- Do not add duplicate layers for the same responsibility.
+- Keep API routes thin; add services only when logic grows.
+
+When unsure, read `docs/architecture.md` and `AGENTS.md`.

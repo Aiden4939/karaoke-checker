@@ -1,0 +1,13 @@
+---
+description: Vue frontend conventions
+globs: apps/web/**/*.{vue,ts,css}
+alwaysApply: false
+---
+
+# Frontend
+
+- Use existing `components/ui` and `components/common` first.
+- Keep API access in `lib/api` and composables.
+- Handle loading, success, and error states.
+- Use `@/` imports inside `apps/web`.
+- Do not fetch the API directly from views when `@app/api-client` can be used.

@@ -1,0 +1,13 @@
+---
+description: UI implementation guardrails
+globs: apps/web/**/*.{vue,css}
+alwaysApply: false
+---
+
+# UI Guidelines
+
+- Reuse existing UI components and Tailwind tokens.
+- Do not add arbitrary colors, font sizes, spacing, or shadows.
+- Cover loading, empty, and error states.
+- Test desktop and mobile layouts for user-facing changes.
+- Check browser console and required network requests after UI work.

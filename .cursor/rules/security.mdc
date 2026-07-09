@@ -1,0 +1,13 @@
+---
+description: Security guardrails
+globs: **/*.{ts,js,mjs,vue,env.example,yml,yaml}
+alwaysApply: false
+---
+
+# Security
+
+- Never commit secrets, tokens, or local `.env` files.
+- Validate all external input at API boundaries.
+- Do not expose stack traces in production.
+- Keep CORS and API base URLs in environment configuration.
+- Question any change that weakens auth, logging, or error handling.

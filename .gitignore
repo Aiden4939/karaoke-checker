@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Test & coverage
+coverage/
+playwright-report/
+test-results/
+blob-report/
+*.lcov
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS & editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+*~
+
+# Vite / Vitest
+apps/web/node_modules/.vite/
+apps/web/node_modules/.tmp/
+
+# Playwright
+/playwright/.cache/
+
+# Docker
+.docker/
+
+# Misc
+.turbo/
+.cache/
+tmp/
+temp/
+.project-init.lock
