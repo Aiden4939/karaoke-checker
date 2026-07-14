@@ -5,6 +5,8 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(3000),
   CORS_ORIGIN: z.string().min(1),
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
+  YOUTUBE_API_KEY: z.string().trim().min(1).optional(),
+  PLAYLIST_CHECK_STORE_PATH: z.string().trim().min(1).default('data/playlist-checks.json'),
 })
 
 export type Env = z.infer<typeof envSchema>

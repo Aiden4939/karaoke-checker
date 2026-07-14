@@ -7,6 +7,9 @@ import { zValidator } from './lib/validation.js'
 import { createErrorHandler, createNotFoundHandler } from './middleware/error-handler.js'
 import { createLogger } from './middleware/logger.js'
 import { getRequestId, requestId } from './middleware/request-id.js'
+import { createPlaylistCheckRoutes } from './routes/playlist-checks.js'
+import { createPlaylistCheckService } from './services/playlist-check/playlist-check-service.js'
+import { createPlaylistCheckStore } from './services/playlist-check/playlist-check-store.js'
 
 export type AppBindings = {
   Variables: {
@@ -15,6 +18,10 @@ export type AppBindings = {
 }
 
 export function createApp(env: Env) {
+  const playlistCheckService = createPlaylistCheckService({
+    store: createPlaylistCheckStore(env.PLAYLIST_CHECK_STORE_PATH),
+    youtubeApiKey: env.YOUTUBE_API_KEY,
+  })
   const app = new Hono<AppBindings>()
     .use('*', requestId)
     .use('*', createLogger(env.LOG_LEVEL))
@@ -50,6 +57,7 @@ export function createApp(env: Env) {
         },
       })
     })
+    .route('/playlist-checks', createPlaylistCheckRoutes(playlistCheckService))
 
   if (env.NODE_ENV !== 'production') {
     app.get('/__test/error', () => {
@@ -68,6 +76,7 @@ const appForType = createApp({
   PORT: 3000,
   CORS_ORIGIN: 'http://localhost:5173',
   LOG_LEVEL: 'info',
+  PLAYLIST_CHECK_STORE_PATH: 'data/playlist-checks.json',
 })
 
 export type AppType = typeof appForType

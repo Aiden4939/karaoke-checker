@@ -1,6 +1,13 @@
 import { hc } from 'hono/client'
 import type { AppType } from '@app/api'
-import { healthResponseSchema } from '@app/contracts'
+import {
+  createPlaylistCheckResponseSchema,
+  healthResponseSchema,
+  playlistCheckResponseSchema,
+  playlistChecksListResponseSchema,
+  type CreatePlaylistCheckRequest,
+  type UpdatePlaylistCheckItemRequest,
+} from '@app/contracts'
 import { ApiClientError, NetworkError, ValidationError, parseApiErrorResponse } from './errors.js'
 
 export type ApiClient = ReturnType<typeof createApiClient>
@@ -75,6 +82,73 @@ export async function getHealth(client: ApiClient) {
   }
 
   return unwrapResponse(response, healthResponseSchema)
+}
+
+export async function createPlaylistCheck(client: ApiClient, input: CreatePlaylistCheckRequest) {
+  const response = await client['playlist-checks'].$post({
+    json: input,
+  })
+
+  return unwrapResponse(response, createPlaylistCheckResponseSchema)
+}
+
+export async function listPlaylistChecks(client: ApiClient) {
+  const response = await client['playlist-checks'].$get()
+
+  return unwrapResponse(response, playlistChecksListResponseSchema)
+}
+
+export async function getPlaylistCheck(client: ApiClient, id: string) {
+  const response = await client['playlist-checks'][':id'].$get({
+    param: {
+      id,
+    },
+  })
+
+  return unwrapResponse(response, playlistCheckResponseSchema)
+}
+
+export async function updatePlaylistCheckItem(
+  client: ApiClient,
+  checkId: string,
+  itemId: string,
+  input: UpdatePlaylistCheckItemRequest,
+) {
+  const response = await client['playlist-checks'][':checkId'].items[':itemId'].$patch({
+    param: {
+      checkId,
+      itemId,
+    },
+    json: input,
+  })
+
+  return unwrapResponse(response, playlistCheckResponseSchema)
+}
+
+export async function recheckPlaylistCheckItem(client: ApiClient, checkId: string, itemId: string) {
+  const response = await client['playlist-checks'][':checkId'].items[':itemId'].recheck.$post({
+    param: {
+      checkId,
+      itemId,
+    },
+  })
+
+  return unwrapResponse(response, playlistCheckResponseSchema)
+}
+
+export async function exportPlaylistCheckCsv(client: ApiClient, id: string): Promise<string> {
+  const response = await client['playlist-checks'][':id']['export.csv'].$get({
+    param: {
+      id,
+    },
+  })
+
+  if (!response.ok) {
+    const body = await readResponseBody(response)
+    throw parseApiErrorResponse(body, response.status)
+  }
+
+  return response.text()
 }
 
 export { ApiClientError, NetworkError, ValidationError, parseApiErrorResponse }

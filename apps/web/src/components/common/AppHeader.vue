@@ -11,7 +11,7 @@ import { RouterLink } from 'vue-router'
         to="/"
         class="text-lg font-semibold tracking-tight text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
-        Inwanding Fullstack
+        Karaoke Checker
       </RouterLink>
 
       <nav aria-label="Main navigation" class="flex items-center gap-4 text-sm">
@@ -20,7 +20,7 @@ import { RouterLink } from 'vue-router'
           class="text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           active-class="text-foreground font-medium"
         >
-          Home
+          Checker
         </RouterLink>
       </nav>
     </div>

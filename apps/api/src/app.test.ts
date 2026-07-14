@@ -8,6 +8,7 @@ const testEnv: Env = {
   PORT: 3000,
   CORS_ORIGIN: 'http://localhost:5173',
   LOG_LEVEL: 'error',
+  PLAYLIST_CHECK_STORE_PATH: '/tmp/karaoke-checker-app-test.json',
 }
 
 const app = createApp(testEnv)
@@ -84,6 +85,28 @@ describe('validation errors', () => {
       },
     })
     expect(body.error.details.length).toBeGreaterThan(0)
+  })
+
+  it('returns a structured validation error for non-playlist URLs', async () => {
+    const response = await app.request('/playlist-checks', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        playlistUrl: 'https://www.youtube.com/watch?v=abc',
+      }),
+    })
+    const body = await response.json()
+
+    expect(response.status).toBe(400)
+    expect(apiErrorResponseSchema.parse(body)).toMatchObject({
+      error: {
+        code: 'VALIDATION_ERROR',
+        message: 'Validation failed',
+        requestId: expect.any(String),
+      },
+    })
   })
 })
 

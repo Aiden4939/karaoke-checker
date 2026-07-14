@@ -1,7 +1,13 @@
 export {
   createApiClient,
+  createPlaylistCheck,
+  exportPlaylistCheckCsv,
+  getPlaylistCheck,
   getHealth,
+  listPlaylistChecks,
+  recheckPlaylistCheckItem,
   resolveApiBaseUrl,
+  updatePlaylistCheckItem,
   unwrapResponse,
   type ApiClient,
 } from './client.js'
