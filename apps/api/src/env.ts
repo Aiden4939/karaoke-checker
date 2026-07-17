@@ -1,3 +1,5 @@
+import { existsSync, readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
 
 const envSchema = z.object({
@@ -10,6 +12,46 @@ const envSchema = z.object({
 })
 
 export type Env = z.infer<typeof envSchema>
+
+function parseDotEnv(content: string): NodeJS.ProcessEnv {
+  return Object.fromEntries(
+    content
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith('#'))
+      .map((line) => {
+        const separatorIndex = line.indexOf('=')
+
+        if (separatorIndex === -1) {
+          return null
+        }
+
+        const key = line.slice(0, separatorIndex).trim()
+        const rawValue = line.slice(separatorIndex + 1).trim()
+        const value = rawValue.replace(/^(['"])(.*)\1$/, '$2')
+
+        return [key, value] as const
+      })
+      .filter((entry): entry is readonly [string, string] => entry !== null),
+  )
+}
+
+function loadDotEnvFile(): NodeJS.ProcessEnv {
+  const path = fileURLToPath(new URL('../.env', import.meta.url))
+
+  if (!existsSync(path)) {
+    return {}
+  }
+
+  return parseDotEnv(readFileSync(path, 'utf8'))
+}
+
+function loadRuntimeEnv(): NodeJS.ProcessEnv {
+  return {
+    ...loadDotEnvFile(),
+    ...process.env,
+  }
+}
 
 export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
   const parsed = envSchema.safeParse(source)
@@ -24,4 +66,4 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
   return parsed.data
 }
 
-export const env = loadEnv()
+export const env = loadEnv(loadRuntimeEnv())

@@ -1,10 +1,5 @@
 import type { ParsedSong } from '@app/contracts'
-import {
-  hasNoiseMarker,
-  normalizeText,
-  removeBracketNoise,
-  stripTitleNoise,
-} from './normalize-text.js'
+import { hasNoiseMarker, normalizeText } from './normalize-text.js'
 
 type Candidate = {
   songTitle: string
@@ -17,11 +12,46 @@ const COMPILATION_MARKERS = [/メドレー/g, /\bmedley\b/gi, /作業用\s*bgm/g
 const VERSION_MARKERS = [/\bthe first take\b/gi, /\blive\b/gi, /\bremix\b/gi, /from /gi]
 const COVER_MARKERS = [/\bcover(ed)?\b/gi, /歌ってみた/g]
 
+function removeFeaturedArtist(value: string): string {
+  return value.replace(/\s+(?:feat\.?|featuring|ft\.?)\s*.+$/i, '').trim()
+}
+
 function cleanCandidate(value: string): string {
-  return stripTitleNoise(removeBracketNoise(value))
-    .replace(/^[-/|]+|[-/|]+$/g, '')
+  return value
+    .replace(/[\[(（][^\])）]*[\])）]/g, ' ')
+    .replace(
+      /[【《][^】》]*(?:official|music\s*video|mv|pv|lyric|lyrics|歌詞)[^】》]*[】》]/gi,
+      ' ',
+    )
+    .replace(/\b(?:official\s*)?(?:music\s*)?(?:video|mv|pv)\b/gi, ' ')
+    .replace(/\blyrics?\b/gi, ' ')
+    .replace(/歌詞付き?/g, ' ')
+    .replace(/歌ってみた/g, ' ')
+    .replace(/^["'「『“”]+|["'」』“”]+$/g, '')
     .replace(/\s+/g, ' ')
+    .replace(/^[-/／|｜\s]+|[-/／|｜\s]+$/g, '')
     .trim()
+}
+
+function cleanSongCandidate(value: string): string {
+  return removeFeaturedArtist(cleanCandidate(value))
+}
+
+function cleanArtistCandidate(value: string): string {
+  return removeFeaturedArtist(
+    value
+      .replace(
+        /[【《][^】》]*(?:official|music\s*video|mv|pv|lyric|lyrics|歌詞)[^】》]*[】》]/gi,
+        ' ',
+      )
+      .replace(/\b(?:official\s*)?(?:music\s*)?(?:video|mv|pv)\b/gi, ' ')
+      .replace(/\blyrics?\b/gi, ' ')
+      .replace(/歌詞付き?/g, ' ')
+      .replace(/歌ってみた/g, ' ')
+      .replace(/^["'「『“”]+|["'」』“”]+$/g, '')
+      .replace(/\s+/g, ' ')
+      .replace(/^[-/／|｜\s]+|[-/／|｜\s]+$/g, ''),
+  ).trim()
 }
 
 function isReasonableCandidate(value: string): boolean {
@@ -53,8 +83,8 @@ function buildCandidate(
   score: number,
   reasons: string[],
 ): Candidate {
-  const cleanedSongTitle = cleanCandidate(songTitle)
-  const cleanedArtistName = artistName ? cleanCandidate(artistName) : undefined
+  const cleanedSongTitle = cleanSongCandidate(songTitle)
+  const cleanedArtistName = artistName ? cleanArtistCandidate(artistName) : undefined
   const nextReasons = [...reasons]
   let nextScore = score
 
@@ -119,24 +149,49 @@ export function parseYoutubeTitle(title: string): ParsedSong {
   const normalizedTitle = normalizeText(title)
   const candidates: Candidate[] = []
 
-  const quoteMatch = normalizedTitle.match(/^(.+?)[「『](.+?)[」』]/)
+  const quoteMatch = title.match(/^(.+?)[「『](.+?)[」』]/)
   if (quoteMatch) {
     candidates.push(
       buildCandidate(quoteMatch[2] ?? '', quoteMatch[1], 50, ['matched_japanese_quote_pattern']),
     )
   }
 
-  const dashMatch = normalizedTitle.match(/^(.+?)\s+-\s+(.+)$/)
+  const westernQuoteMatch = title.match(/^(.+?)[“"](.+?)[”"]/)
+  if (westernQuoteMatch) {
+    candidates.push(
+      buildCandidate(westernQuoteMatch[2] ?? '', westernQuoteMatch[1], 50, [
+        'matched_western_quote_pattern',
+      ]),
+    )
+  }
+
+  const dashMatch = title.match(/^(.+?)\s+[‐‑‒–—―-]\s+(.+)$/)
   if (dashMatch) {
     candidates.push(
       buildCandidate(dashMatch[2] ?? '', dashMatch[1], 40, ['matched_artist_dash_title']),
     )
   }
 
-  const slashMatch = normalizedTitle.match(/^(.+?)\s+\/\s+(.+)$/)
+  const pipeMatch = title.match(/^(.+?)\s*[|｜]\s*(.+)$/)
+  if (pipeMatch) {
+    candidates.push(
+      buildCandidate(pipeMatch[2] ?? '', pipeMatch[1], 36, ['matched_artist_pipe_title']),
+    )
+  }
+
+  const slashMatch = title.match(/^(.+?)\s+[\/／]\s+(.+)$/)
   if (slashMatch) {
     candidates.push(
       buildCandidate(slashMatch[2] ?? '', slashMatch[1], 32, ['matched_artist_slash_title']),
+    )
+  }
+
+  const compactSlashMatch = title.match(/^([^/／]+)[/／]([^/／]+)$/)
+  if (compactSlashMatch) {
+    candidates.push(
+      buildCandidate(compactSlashMatch[1] ?? '', compactSlashMatch[2], 30, [
+        'matched_title_slash_artist',
+      ]),
     )
   }
 
@@ -149,20 +204,20 @@ export function parseYoutubeTitle(title: string): ParsedSong {
     )
   }
 
-  const byMatch = normalizedTitle.match(/^(.+?)\s+by\s+(.+)$/)
+  const byMatch = title.match(/^(.+?)\s+by\s+(.+)$/i)
   if (byMatch) {
     candidates.push(buildCandidate(byMatch[1] ?? '', byMatch[2], 28, ['matched_title_by_artist']))
   }
 
   if (candidates.length === 0) {
-    candidates.push(buildCandidate(normalizedTitle, undefined, 10, ['no_reliable_pattern']))
+    candidates.push(buildCandidate(title, undefined, 10, ['no_reliable_pattern']))
   }
 
   const [bestCandidate] = candidates
     .map((candidate) => applyPenalty(candidate, normalizedTitle))
     .sort((left, right) => right.score - left.score)
 
-  const fallbackSongTitle = cleanCandidate(normalizedTitle) || title.trim()
+  const fallbackSongTitle = cleanSongCandidate(title) || title.trim()
   const songTitle = bestCandidate?.songTitle || fallbackSongTitle
   const score = bestCandidate?.score ?? 0
 

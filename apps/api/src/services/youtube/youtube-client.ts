@@ -17,6 +17,7 @@ type YoutubePlaylistItemsResponse = {
     snippet?: {
       title?: string
       channelTitle?: string
+      videoOwnerChannelTitle?: string
       resourceId?: {
         videoId?: string
       }
@@ -68,7 +69,7 @@ export function createYoutubeClient(apiKey?: string): YoutubeClient {
           videos.push({
             videoId,
             title,
-            channelTitle: item.snippet?.channelTitle,
+            channelTitle: item.snippet?.videoOwnerChannelTitle ?? item.snippet?.channelTitle,
             url: `https://www.youtube.com/watch?v=${videoId}`,
           })
         }

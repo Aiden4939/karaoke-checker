@@ -76,7 +76,7 @@ describe('createPlaylistCheckService', () => {
     expect(processed?.items[0]).toMatchObject({
       parsed: {
         songTitle: 'アイドル',
-        artistName: 'yoasobi',
+        artistName: 'YOASOBI',
         confidence: 'high',
       },
       providers: {

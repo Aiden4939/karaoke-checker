@@ -13,6 +13,14 @@ function stripHtml(value: string): string {
     .trim()
 }
 
+function hasNoSearchResults(text: string): boolean {
+  return (
+    text.includes('該当データがありません') ||
+    text.includes('検索結果がありません') ||
+    /曲\s*\(0件\)/.test(text)
+  )
+}
+
 export async function fetchSearchPage(url: URL): Promise<string> {
   const response = await fetch(url, {
     headers: {
@@ -37,6 +45,10 @@ export function extractHtmlSearchMatches(
   const normalizedText = normalizeText(text)
   const normalizedTitle = normalizeText(input.songTitle)
   const normalizedArtist = input.artistName ? normalizeText(input.artistName) : ''
+
+  if (hasNoSearchResults(text)) {
+    return []
+  }
 
   if (!normalizedText.includes(normalizedTitle)) {
     return []
