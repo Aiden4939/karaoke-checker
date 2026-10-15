@@ -29,7 +29,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
     "@playwright/test": "^1.55.0",
-    "concurrently": "^9.2.1",
+    "concurrently": "^10.0.3",
     "knip": "^5.64.0",
     "prettier": "3.8.4"
   }
